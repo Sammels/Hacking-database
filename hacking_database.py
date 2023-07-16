@@ -51,9 +51,9 @@ def create_commendation(schoolkid: str, subject: str) -> str:
 
     try:
         schoolkid_check = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
-        schoolkid_year = schoolkid_check[0].year_of_study
-        schoolkid_group_letter = schoolkid_check[0].group_letter
-        schoolkid_id = schoolkid_check[0].id
+        schoolkid_year = schoolkid_check.year_of_study
+        schoolkid_group_letter = schoolkid_check.group_letter
+        schoolkid_id = schoolkid_check.id
 
         subject_ = Subject.objects.filter(title__contains=f"{subject}",
                                           year_of_study__contains=schoolkid_year)
