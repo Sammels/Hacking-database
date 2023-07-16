@@ -8,31 +8,46 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 def fix_marks(schoolkid: str):
     """Функция изменяет оценки."""
-    user_name = Mark.objects.filter(schoolkid__full_name__contains=f"{schoolkid}", points__lte=3)
-    ids = []
-    for point in user_name:
-        ids.append(point.id)
+    try:
+        user_name = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
+        user_name = Mark.objects.filter(schoolkid__full_name__contains=user_name, points__lte=3)
+        ids = []
+        for point in user_name:
+            ids.append(point.id)
 
-    for point in ids:
-        work_process = Mark.objects.get(id=point)
-        work_process.points = 5
-        work_process.save()
+        for point in ids:
+            work_process = Mark.objects.get(id=point)
+            work_process.points = 5
+            work_process.save()
 
-    print("Work is over. You are HACKERMAN...")
+        print("Работа окончена. You are HACKERMAN...")
+
+    except ObjectDoesNotExist:
+        print("Такого имени не существует")
+    except MultipleObjectsReturned:
+        print("Найдено несколько учеников")
 
 
 def remove_chastisements(schoolkid: str):
     """Функция удаляет замечания ученику"""
-    user_name = Chastisement.objects.filter(schoolkid__full_name__contains=f"{schoolkid}")
-    ids = []
-    for point in user_name:
-        ids.append(point.id)
+    try:
+        user_name = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
+        user_name = Chastisement.objects.filter(schoolkid__full_name__contains=f"{schoolkid}")
+        ids = []
+        for point in user_name:
+            ids.append(point.id)
 
-    for point in ids:
-        work_process = Chastisement.objects.get(id=point)
-        work_process.delete()
+        for point in ids:
+            work_process = Chastisement.objects.get(id=point)
+            work_process.delete()
 
-    print("Work is over. You are BAD...")
+        print("Работа окончена. You are BAD...")
+
+    except ObjectDoesNotExist:
+        print("Такого имени не существует")
+    except MultipleObjectsReturned:
+        print("Найдено несколько учеников")
+
 
 
 def create_commendation(schoolkid: str, subject: str) -> str:
@@ -68,10 +83,10 @@ def create_commendation(schoolkid: str, subject: str) -> str:
         Commendation.objects.create(teacher_id=teacher_id, subject_id=subject_id, schoolkid_id=schoolkid_id,
                                     text=choice_commendation, created=lesson_date)
 
-        print("You are very BAD kid")
+        print("Ты очень ПЛОХОЙ.")
 
     except ObjectDoesNotExist:
-        print("Такого имени не существует")
+        print("Такого имени, или предмета не существует")
     except MultipleObjectsReturned:
         print("Найдено несколько учеников")
 
