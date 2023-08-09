@@ -38,7 +38,6 @@ def fix_marks(schoolkid: str):
 @exception_decorator
 def remove_chastisements(schoolkid: str):
     """Функция удаляет замечания ученику"""
-    user_name = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
     user_name = Chastisement.objects.filter(schoolkid__full_name__contains=f"{schoolkid}")
     ids = []
     for point in user_name:
