@@ -43,8 +43,7 @@ def remove_chastisements(schoolkid: str):
         ids.append(point.id)
 
     for point in ids:
-        work_process = Chastisement.objects.get(id=point)
-        work_process.delete()
+        Chastisement.objects.get(id=point).delete()
 
     print("Работа окончена. You are BAD...")
 
