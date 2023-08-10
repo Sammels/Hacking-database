@@ -3,7 +3,6 @@ from random import choice
 from datacenter.models import (Chastisement, Commendation, Lesson, Mark,
                                Schoolkid, Subject)
 
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 
 def exception_decorator(func):
@@ -12,26 +11,26 @@ def exception_decorator(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except ObjectDoesNotExist:
+        except Schoolkid.DoesNotExist:
             print("Такого имени не существует")
-        except MultipleObjectsReturned:
+        except Schoolkid.MultipleObjectsReturned:
             print("Найдено несколько учеников")
+
     return wrapper
 
 
 @exception_decorator
 def fix_marks(schoolkid: str):
     """Функция изменяет оценки."""
-    user_name = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
-    user_name = Mark.objects.filter(schoolkid__full_name__contains=user_name, points__lte=3)
+    schoolkid_name = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
+    schoolkid_score = Mark.objects.filter(schoolkid_id=schoolkid_name.id, points__lte=3)
+
     ids = []
-    for point in user_name:
+    for point in schoolkid_score:
         ids.append(point.id)
 
     for point in ids:
-        work_process = Mark.objects.get(id=point)
-        work_process.points = 5.
-        work_process.save()
+        Mark.objects.filter(id=point).update(points=5)
     print("Работа окончена. You are HACKERMAN...")
 
 
