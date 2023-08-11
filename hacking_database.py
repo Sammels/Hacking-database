@@ -61,15 +61,14 @@ def create_commendation(schoolkid: str, subject: str) -> str:
     schoolkid_id = schoolkid_check.id
 
     subject_ = Subject.objects.filter(title__contains=f"{subject}",
-                                      year_of_study__contains=schoolkid_year)
-    subject_id = subject_[0].id
+                                      year_of_study__contains=schoolkid_year).first()
+    subject_id = subject_.id
 
-    teacher_identification = Lesson.objects.filter(subject_id=subject_id, group_letter=schoolkid_group_letter,
-                                                   year_of_study=schoolkid_year)
-    teacher_id = teacher_identification[0].teacher_id
-    lesson_date = teacher_identification[0].date
+    lesson_identification = Lesson.objects.filter(subject_id=subject_id, group_letter=schoolkid_group_letter,
+                                                   year_of_study=schoolkid_year).first()
+    teacher_id = lesson_identification.teacher_id
+    lesson_date = lesson_identification.date
 
-    # Create inst
     Commendation.objects.create(teacher_id=teacher_id, subject_id=subject_id, schoolkid_id=schoolkid_id,
                                 text=choice_commendation, created=lesson_date)
 
