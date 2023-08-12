@@ -57,17 +57,17 @@ def create_commendation(schoolkid: str, subject: str) -> str:
 
     schoolkid_check = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
     schoolkid_year = schoolkid_check.year_of_study
-    schoolkid_group_letter = schoolkid_check.group_letter
     schoolkid_id = schoolkid_check.id
 
     subject_ = Subject.objects.filter(title__contains=f"{subject}",
                                       year_of_study__contains=schoolkid_year).first()
     subject_id = subject_.id
 
-    lesson_identification = Lesson.objects.filter(subject_id=subject_id, group_letter=schoolkid_group_letter,
-                                                   year_of_study=schoolkid_year).first()
-    teacher_id = lesson_identification.teacher_id
-    lesson_date = lesson_identification.date
+    lesson_identification = Lesson.objects.all().order_by('subject_id', 'group_letter', 'year_of_study').values().first()
+
+
+    teacher_id = lesson_identification['teacher_id']
+    lesson_date = lesson_identification['date']
 
     Commendation.objects.create(teacher_id=teacher_id, subject_id=subject_id, schoolkid_id=schoolkid_id,
                                 text=choice_commendation, created=lesson_date)
