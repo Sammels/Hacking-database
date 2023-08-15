@@ -33,14 +33,7 @@ def exception_decorator(func):
 def fix_marks(schoolkid: str):
     """Функция изменяет оценки."""
     schoolkid_name = Schoolkid.objects.get(full_name__contains=f"{schoolkid}")
-    schoolkid_score = Mark.objects.filter(schoolkid_id=schoolkid_name.id, points__lte=3)
-
-    ids = []
-    for point in schoolkid_score:
-        ids.append(point.id)
-
-    for point in ids:
-        Mark.objects.filter(id=point).update(points=5)
+    Mark.objects.filter(schoolkid_id=schoolkid_name.id, points__lte=3).update(points=5)
     print("Работа окончена. You are HACKERMAN...")
 
 
@@ -65,7 +58,6 @@ def create_commendation(schoolkid: str, subject: str) -> str:
 
     lesson_identification = Lesson.objects.order_by('subject_id', 'group_letter', 'year_of_study').first()
 
-    print(lesson_identification)
 
 
     teacher_id = lesson_identification.teacher_id
