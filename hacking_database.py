@@ -54,17 +54,20 @@ def create_commendation(schoolkid: str, subject: str) -> str:
 
     subject_ = Subject.objects.filter(title__contains=f"{subject}",
                                       year_of_study__contains=schoolkid_year).first()
-    subject_id = subject_.id
 
-    lesson_identification = Lesson.objects.order_by('subject_id', 'group_letter', 'year_of_study').first()
+    if subject_ is not None:
+        subject_id = subject_.id
 
+        lesson_identification = Lesson.objects.order_by('subject_id', 'group_letter', 'year_of_study').first()
 
+        teacher_id = lesson_identification.teacher_id
+        lesson_date = lesson_identification.date
 
-    teacher_id = lesson_identification.teacher_id
-    lesson_date = lesson_identification.date
+        Commendation.objects.create(teacher_id=teacher_id, subject_id=subject_id, schoolkid_id=schoolkid_id,
+                                    text=choice_commendation, created=lesson_date)
+    else:
+        print("Предмет не найден")
 
-    Commendation.objects.create(teacher_id=teacher_id, subject_id=subject_id, schoolkid_id=schoolkid_id,
-                                text=choice_commendation, created=lesson_date)
 
     print("Ты очень ПЛОХОЙ.")
 
